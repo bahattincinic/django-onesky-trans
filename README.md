@@ -26,6 +26,7 @@ Documentation
 - [Configuration](docs/configuration.md)
 - [Management Command](docs/management_command.md)
 - [Client](docs/client.md)
+- [How to OneSky](docs/how_to_onesky.md)
 
 
 Contributing

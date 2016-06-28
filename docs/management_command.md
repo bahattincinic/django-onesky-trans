@@ -2,8 +2,9 @@ Management command Usage
 ---
 
 This command works in the following order:
+- Download Translation files from OneSky
 - makemessages
-- fetch translation from OneSky
+- send Translation Files to OneSky
 - compilemessages
 
 
