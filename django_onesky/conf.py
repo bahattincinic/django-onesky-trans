@@ -26,7 +26,7 @@ class AppSettings(object):
 
     def __getattr__(self, attr):
         if attr not in self.defaults.keys():
-            raise AttributeError("Invalid API setting: '%s'" % attr)
+            raise AttributeError("Invalid APP setting: '%s'" % attr)
 
         try:
             # Check if present in user settings

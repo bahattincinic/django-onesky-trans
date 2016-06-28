@@ -12,7 +12,8 @@ from requests.exceptions import HTTPError
 from django_onesky.client import OneSkyClient
 from django_onesky.utils import remove_fuzzy_translations
 from django_onesky.conf import app_settings
-
+from django_onesky.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
+                                  HTTP_500_INTERNAL_SERVER_ERROR)
 
 client = OneSkyClient()
 
@@ -53,7 +54,7 @@ class Command(management.BaseCommand):
         """
         project = app_settings.PO_TRANSLATE_PROJECT
         status, response = client.get_project_languages(project)
-        if status != 200:
+        if status != HTTP_200_OK:
             error_message = self._get_error_message(response)
             raise CommandError("Unable to retrieve project languages "
                                "for #%s. OneSky API status: %s, OneSky API"
@@ -62,7 +63,7 @@ class Command(management.BaseCommand):
 
         project_languages = response.get("data", [])
         status, response = client.get_project_file_list(project)
-        if status != 200:
+        if status != HTTP_200_OK:
             error_message = self._get_error_message(response)
             raise CommandError("Unable to retrieve project files "
                                "for #%s. OneSky API status: %s, OneSky API"
@@ -94,20 +95,33 @@ class Command(management.BaseCommand):
                     export_file_name=export_file_name)
 
                 error_messages = {
-                    200: 'Saving translation file %s for #%s.' % (
-                        response.get('file_name', ''), project),
-                    204: 'Unable to download translation file %s '
-                         'for #%s. File has no content. OneSky API '
-                         'status: %s, OneSky API message: %s"' % (
-                        export_file_name, project, status,
-                        self._get_error_message(response)),
-                    500: 'Something went wrong with downloading '
-                         'translation file %s for #%s. OneSky API '
-                         'status: %s, OneSky API message: %s' % (
-                        export_file_name, project, status,
-                        self._get_error_message(response))
+                    HTTP_200_OK: 'Saving translation file %(filename)s '
+                                 'for #%(project)s.',
+                    HTTP_204_NO_CONTENT: 'Unable to download translation '
+                                         'file %(export_file_name)s '
+                                         'for #%(project)s. File has no '
+                                         'content. OneSky API '
+                                         'status: %(status)s, OneSky API '
+                                         'message: %(message)s"',
+                    HTTP_500_INTERNAL_SERVER_ERROR: 'Something went wrong '
+                                                    'with downloading '
+                                                    'translation file '
+                                                    '%(export_file_name)s '
+                                                    'for #%(project)s. '
+                                                    'OneSky API  status: '
+                                                    '%(status)s, OneSky API '
+                                                    'message: %(message)s',
                 }
-                self.stdout.write(error_messages.get(status, 500))
+
+                message = error_messages.get(status,
+                                             HTTP_500_INTERNAL_SERVER_ERROR)
+                self.stdout.write(message % {
+                    'export_file_name': export_file_name,
+                    'project': project,
+                    'status': status,
+                    'message': self._get_error_message(response),
+                    'file_name': response.get('file_name', '')
+                })
         return file_names
 
     def _push_translations(self, file_names, locale):
