@@ -9,7 +9,7 @@ setup(
     author='Bahattin Cinic',
     author_email='bahattincinic@gmail.com',
     description='OneSky integration for your Django app',
-    packages=find_packages(),
+    packages=find_packages(exclude='docs'),
     install_requires=[
         'django>=1.4',
         'polib>=1.0',

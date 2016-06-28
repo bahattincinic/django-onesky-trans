@@ -10,11 +10,11 @@ INSTALLED_APPS = (
 )
 
 ONESKY_CONFIG = {
-    'BASE_URL': 'https://platform.api.onesky.io/1/',
+    'BASE_URL': 'https://platform.api.onesky.io/1/', # optional
     'PUBLIC_KEY': '<public key>',
     'PRIVATE_KEY': '<private key>',
     'PO_TRANSLATE_PROJECT': <project id>,
-    'ENABLED': True,
+    'ENABLED': True, # optional
 }
 ```
 
