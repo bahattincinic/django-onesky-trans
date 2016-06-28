@@ -5,7 +5,7 @@ class MakeMessagesProcess(object):
 
     def __call__(self, options):
         locale = options.get('locale')
-        verbosity = options.get('verbosity')
+        verbosity = options.get('verbosity', 0)
         ignore = options.get('ignore')
 
         call_command('makemessages', locale=locale,
@@ -16,7 +16,7 @@ class CompileMessagesProcess(object):
 
     def __call__(self, options):
         locale = options.get('locale')
-        verbosity = options.get('verbosity')
+        verbosity = options.get('verbosity', 0)
 
         management.call_command('compilemessages', locale=locale,
                                 verbosity=verbosity)

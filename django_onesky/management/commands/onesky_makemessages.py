@@ -7,8 +7,6 @@ from django.core import management
 from django.core.management.base import CommandError
 from django.conf import settings
 
-from requests.exceptions import HTTPError
-
 from django_onesky.client import OneSkyClient
 from django_onesky.utils import remove_fuzzy_translations
 from django_onesky.conf import app_settings
@@ -63,9 +61,9 @@ class Command(management.BaseCommand):
                                                 error_message))
 
         file_names = [
-            file.get("file_name")
-            for file in response.get("data", [])
-            if file.get("file_name").endswith(".po")
+            row.get("file_name")
+            for row in response.get("data", [])
+            if row.get("file_name").endswith(".po")
         ]
 
         for file_name in file_names:
@@ -141,31 +139,27 @@ class Command(management.BaseCommand):
                                                is_keeping_all_strings=False)
 
     def handle(self, *args, **options):
-        try:
-            locale = options.get('locale',
-                                 map(itemgetter(0), settings.LANGUAGES))
+        locale = options.get('locale', map(itemgetter(0), settings.LANGUAGES))
 
-            if not app_settings.ENABLED:
-                output = raw_input("OneSky Disabled in settings. Are you "
-                                   "sure you want to continue with "
-                                   "this process ? Type 'yes' to continue, or "
-                                   "'no' to cancel")
-                if output.lower() not in ['y', 'yes']:
-                    raise CommandError('Process cancelled.')
+        if not app_settings.ENABLED:
+            output = raw_input("OneSky Disabled in settings. Are you "
+                               "sure you want to continue with "
+                               "this process ? Type 'yes' to continue, or "
+                               "'no' to cancel")
+            if output.lower() not in ['y', 'yes']:
+                raise CommandError('Process cancelled.')
 
-            status, response = client.get_project_detail(
-                project_id=app_settings.PO_TRANSLATE_PROJECT)
-            if status != HTTP_200_OK:
-                raise CommandError('%s project is invalid. You should '
-                                   'check ONESKY_CONFIG' % project_id)
+        status, response = client.get_project_detail(
+            project_id=app_settings.PO_TRANSLATE_PROJECT)
+        if status != HTTP_200_OK:
+            raise CommandError('%s project is invalid. You should '
+                               'check ONESKY_CONFIG' % project_id)
 
-            file_names = self._pull_translations()
+        file_names = self._pull_translations()
+        make_messages = app_settings.MAKE_MESSAGES_PROCESS_CLASS()
+        compile_messages = app_settings.COMPILE_MESSAGES_PROCESS_CLASS()
 
-            app_settings.MAKE_MESSAGES_PROCESS_CLASS(options=options)
+        make_messages(options=options)
 
-            self._push_translations(file_names, locale)
-            app_settings.COMPILE_MESSAGES_PROCESS_CLASS(options=options)
-        except HTTPError as exc:
-            raise CommandError("[%s] %s [%s]" % (exc.request.method,
-                                                 exc.request.url,
-                                                 exc.message))
+        self._push_translations(file_names, locale)
+        compile_messages(options=options)
