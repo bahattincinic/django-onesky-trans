@@ -1,3 +1,5 @@
+<img src="docs/logo.png" width="300" />
+
 # django-onesky-trans
 OneSky integration for your Django app
 
