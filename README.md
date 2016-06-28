@@ -3,6 +3,13 @@
 # django-onesky-trans
 OneSky integration for your Django app
 
+
+## Requirements
+
+* Django >= 1.6
+* Python >= 2.7
+
+
 ## How to install
 
 You can install django-onesky-trans using **pip**
