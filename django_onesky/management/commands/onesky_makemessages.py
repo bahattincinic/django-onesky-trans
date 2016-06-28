@@ -155,7 +155,7 @@ class Command(management.BaseCommand):
 
             status, response = client.get_project_detail(
                 project_id=app_settings.PO_TRANSLATE_PROJECT)
-            if status != 200:
+            if status != HTTP_200_OK:
                 raise CommandError('%s project is invalid. You should '
                                    'check ONESKY_CONFIG' % project_id)
 
