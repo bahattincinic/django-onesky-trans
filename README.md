@@ -45,10 +45,10 @@ Management command Usage
 ```sh
 $ python manage.py onesky_makemessages --help
   Usage: ./manage.py onesky_makemessages [options]
-  
+
   Updates .po translation files using makemessages and uploads them to OneSky translation service.
   Pushes new translation stringsfrom OneSky to django app and compiles messages.
-  
+
   Options:
     -v VERBOSITY, --verbosity=VERBOSITY
                           Verbosity level; 0=minimal output, 1=normal output,
@@ -64,13 +64,6 @@ $ python manage.py onesky_makemessages --help
     --no-color            Don't colorize the command output.
     --version             show program's version number and exit
     -h, --help            show this help message and exit
-```
-
-To run the tests
--------
-
-```sh
-$ python manage.py test
 ```
 
 
