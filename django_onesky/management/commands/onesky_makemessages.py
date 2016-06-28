@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 
 from django_onesky.client import OneSkyClient
 from django_onesky.utils import remove_fuzzy_translations
-from django_onesky.conf import package_settings
+from django_onesky.conf import app_settings
 
 
 client = OneSkyClient()
@@ -51,7 +51,7 @@ class Command(management.BaseCommand):
         """
         Download Translation files from OneSky
         """
-        project = package_settings.PO_TRANSLATE_PROJECT
+        project = app_settings.PO_TRANSLATE_PROJECT
         status, response = client.get_project_languages(project)
         if status != 200:
             error_message = self._get_error_message(response)
@@ -116,7 +116,7 @@ class Command(management.BaseCommand):
 
         :file_names array
         """
-        project = package_settings.PO_TRANSLATE_PROJECT
+        project = app_settings.PO_TRANSLATE_PROJECT
         for language_code in locale:
             for file_name in file_names:
                 upload_file_name = os.path.join(client.locale_path,
@@ -139,7 +139,7 @@ class Command(management.BaseCommand):
             locale = options.get('locale',
                                  map(itemgetter(0), settings.LANGUAGES))
 
-            if not package_settings.ENABLED:
+            if not app_settings.ENABLED:
                 output = raw_input("OneSky Disabled in settings. Are you "
                                    "sure you want to continue with "
                                    "this process ? Type 'yes' to continue, or "
@@ -148,7 +148,7 @@ class Command(management.BaseCommand):
                     raise CommandError('Process cancelled.')
 
             status, response = client.get_project_detail(
-                project_id=package_settings.PO_TRANSLATE_PROJECT)
+                project_id=app_settings.PO_TRANSLATE_PROJECT)
             if status != 200:
                 raise CommandError('%s project is invalid. You should '
                                    'check ONESKY_CONFIG' % project_id)

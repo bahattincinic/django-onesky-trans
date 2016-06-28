@@ -8,7 +8,9 @@ try:
 except ImportError:
     from urlparse import urljoin
 
-from django_onesky.conf import package_settings
+from django.conf import settings
+
+from django_onesky.conf import app_settings
 
 
 class OneSkyClient(object):
@@ -20,7 +22,7 @@ class OneSkyClient(object):
     """
 
     def __init__(self, locale_path=None):
-        self.locale_path = locale_path or package_settings.DEFAULT_LOCALE_PATH
+        self.locale_path = locale_path or settings.LOCALE_PATHS[0]
 
     def _get_authentication_params(self):
         """
@@ -35,12 +37,12 @@ class OneSkyClient(object):
         timestamp = str(int(time.time()))
         dev_hash = hashlib.md5()
         dev_hash.update(timestamp)
-        dev_hash.update(package_settings.PRIVATE_KEY)
+        dev_hash.update(app_settings.PRIVATE_KEY)
 
         return {
             'timestamp': timestamp,
             'dev_hash': dev_hash.hexdigest(),
-            'api_key': package_settings.PUBLIC_KEY
+            'api_key': app_settings.PUBLIC_KEY
         }
 
     def _normalize_response(self, response):
@@ -78,7 +80,7 @@ class OneSkyClient(object):
         :url endpoint
         :method GET|POST...
         """
-        base_url = package_settings.BASE_URL
+        base_url = app_settings.BASE_URL
 
         # Send auth credentials for every request.
         params = kwargs.pop('params', {})

@@ -27,14 +27,14 @@ Add to your settings.py
 ```sh
 INSTALLED_APPS = (
     ...
-    'django_onesky_trans'
+    'django_onesky'
 )
 
 ONESKY_CONFIG = {
     'BASE_URL': 'https://platform.api.onesky.io/1/',
     'PUBLIC_KEY': '<public key>',
     'PRIVATE_KEY': '<private key>',
-    'PO_TRANSLATE_PROJECT': <prorject id>,
+    'PO_TRANSLATE_PROJECT': <project id>,
     'ENABLED': True,
 }
 ```
