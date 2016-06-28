@@ -15,22 +15,8 @@ from django_onesky.conf import app_settings
 from django_onesky.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                   HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 client = OneSkyClient()
-
-
-def run_makemessages(verbosity=0, locale):
-    management.call_command('makemessages', locale=locale,
-                            symlinks=True, verbosity=verbosity)
-    management.call_command('gmakemessages', locale=locale,
-                            symlinks=True, domain='djangojs',
-                            ignore_patterns=["node_modules", "bower",
-                                             "static", "components"],
-                            verbosity=verbosity)
-
-
-def run_compilemessages(verbosity=0, locale):
-    management.call_command('compilemessages', locale=locale,
-                            verbosity=verbosity)
 
 
 class Command(management.BaseCommand):
@@ -43,6 +29,10 @@ class Command(management.BaseCommand):
         make_option('--locale', '-l', dest='locale', action='append',
                     help='locale(s) to process (e.g. de_AT). Default is to '
                          'process all. Can be used multiple times.'),
+        make_option('--ignore', '-i', action='append', dest='ignore_patterns',
+                    default=[], metavar='PATTERN',
+                    help='Ignore files or directories matching this glob-style'
+                         ' pattern. Use multiple times to ignore more.'),
     )
 
     def _get_error_message(self, response):
@@ -168,10 +158,11 @@ class Command(management.BaseCommand):
                                    'check ONESKY_CONFIG' % project_id)
 
             file_names = self._pull_translations()
-            run_makemessages(verbosity=options['verbosity'], locale=locale)
+
+            app_settings.MAKE_MESSAGES_PROCESS_CLASS(options=options)
 
             self._push_translations(file_names, locale)
-            run_compilemessages(verbosity=options['verbosity'], locale=locale)
+            app_settings.COMPILE_MESSAGES_PROCESS_CLASS(options=options)
         except HTTPError as exc:
             raise CommandError("[%s] %s [%s]" % (exc.request.method,
                                                  exc.request.url,

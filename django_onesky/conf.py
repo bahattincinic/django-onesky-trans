@@ -1,5 +1,12 @@
 from django.conf import settings
 
+try:
+    # Available in Python 3.1+
+    import importlib
+except ImportError:
+    # Will be removed in Django 1.9
+    from django.utils import importlib
+
 
 SETTINGS_KEY = 'ONESKY_CONFIG'
 DEFAULTS = {
@@ -7,8 +14,32 @@ DEFAULTS = {
     'PUBLIC_KEY': None,
     'PRIVATE_KEY': None,
     'PO_TRANSLATE_PROJECT': None,
-    'ENABLED': True
+    'ENABLED': True,
+    'MAKE_MESSAGES_PROCESS_CLASS': (
+        'django_onesky.process_messages.MakeMessagesProcess'),
+    'COMPILE_MESSAGES_PROCESS_CLASS': (
+        'django_onesky.process_messages.CompileMessagesProcess')
 }
+
+IMPORT_STRINGS = (
+    'MAKE_MESSAGES_PROCESS_CLASS',
+    'COMPILE_MESSAGES_PROCESS_CLASS'
+)
+
+
+def import_from_string(val, setting_name):
+    """
+    Attempt to import a class from a string representation.
+    """
+    try:
+        parts = val.split('.')
+        module_path, class_name = '.'.join(parts[:-1]), parts[-1]
+        module = importlib.import_module(module_path)
+        return getattr(module, class_name)
+    except (ImportError, AttributeError) as e:
+        msg = "Could not import '%s' for API setting '%s'. %s: %s." % (
+            val, setting_name, e.__class__.__name__, e)
+        raise ImportError(msg)
 
 
 class AppSettings(object):
@@ -34,6 +65,9 @@ class AppSettings(object):
         except KeyError:
             # Fall back to defaults
             val = self.defaults[attr]
+
+        if attr in IMPORT_STRINGS:
+            val = import_from_string(val, attr)
 
         # Cache the result
         setattr(self, attr, val)
