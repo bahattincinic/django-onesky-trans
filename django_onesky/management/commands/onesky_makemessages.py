@@ -20,10 +20,12 @@ client = OneSkyClient()
 
 
 class Command(management.BaseCommand):
-    help = "Updates .po translation files using makemessages and "\
-           "uploads them to OneSky translation service. \n"\
-           "Pushes new translation strings"\
-           "from OneSky to django app and compiles messages."""
+    help = (
+        "Updates .po translation files using makemessages and "
+        "uploads them to OneSky translation service."
+        "Pushes new translation strings"
+        "from OneSky to django app and compiles messages."""
+    )
 
     option_list = management.BaseCommand.option_list + (
         make_option('--locale', '-l', dest='locale', action='append',
