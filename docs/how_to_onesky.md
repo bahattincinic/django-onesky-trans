@@ -10,8 +10,8 @@ How to OneSky?
 
 ---
 
-- Configure your django app for django-oneskyapp tool
-- Use manage.py oneskyapp management command to pull, make, push, compile translations
+- Configure your django app for django-onesky-trans tool
+- Use manage.py onesky_messages management command to pull, make, push, compile translations
 - Restart your django app
 
 ---
@@ -19,7 +19,7 @@ How to OneSky?
 - Add new strings to your django app
 - Use manage.py oneskyapp
 - Translate using OneSky
-- Use manage.py oneskyapp
+- Use manage.py onesky_messages
 - Restart your django app
 
 

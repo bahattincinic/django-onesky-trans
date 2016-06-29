@@ -13,7 +13,7 @@ DEFAULTS = {
     'BASE_URL': 'https://platform.api.onesky.io/1/',
     'PUBLIC_KEY': None,
     'PRIVATE_KEY': None,
-    'PO_TRANSLATE_PROJECT': None,
+    'PROJECT_ID': None,
     'ENABLED': True,
     'MAKE_MESSAGES_PROCESS_CLASS': (
         'django_onesky.process_messages.MakeMessagesProcess'),

@@ -42,7 +42,7 @@ class Command(management.BaseCommand):
         """
         Download Translation files from OneSky
         """
-        project = app_settings.PO_TRANSLATE_PROJECT
+        project = app_settings.PROJECT_ID
         status, response = client.get_project_languages(project)
         if status != HTTP_200_OK:
             error_message = self._get_error_message(response)
@@ -120,7 +120,7 @@ class Command(management.BaseCommand):
 
         :file_names array
         """
-        project = app_settings.PO_TRANSLATE_PROJECT
+        project = app_settings.PROJECT_ID
         for language_code in locale:
             for file_name in file_names:
                 upload_file_name = os.path.join(client.locale_path,
@@ -149,8 +149,7 @@ class Command(management.BaseCommand):
             if output.lower() not in ['y', 'yes']:
                 raise CommandError('Process cancelled.')
 
-        status, response = client.get_project_detail(
-            project_id=app_settings.PO_TRANSLATE_PROJECT)
+        status, response = client.get_project_detail(app_settings.PROJECT_ID)
         if status != HTTP_200_OK:
             raise CommandError('%s project is invalid. You should '
                                'check ONESKY_CONFIG' % project_id)
