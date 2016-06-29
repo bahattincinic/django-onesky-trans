@@ -27,7 +27,8 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--locale', '-l', dest='locale', action='append',
                     help='locale(s) to process (e.g. de_AT). Default is to '
-                         'process all. Can be used multiple times.'),
+                         'process all. Can be used multiple times.',
+                    default=map(itemgetter(0), settings.LANGUAGES)),
         make_option('--ignore', '-i', action='append', dest='ignore_patterns',
                     default=[], metavar='PATTERN',
                     help='Ignore files or directories matching this glob-style'
@@ -136,7 +137,6 @@ class Command(BaseCommand):
                                                is_keeping_all_strings=False)
 
     def handle(self, *args, **options):
-        locale = options.get('locale', map(itemgetter(0), settings.LANGUAGES))
 
         if not app_settings.ENABLED:
             output = raw_input("OneSky Disabled in settings. Are you "
@@ -154,7 +154,6 @@ class Command(BaseCommand):
         make_messages = app_settings.MAKE_MESSAGES_PROCESS_CLASS()
         compile_messages = app_settings.COMPILE_MESSAGES_PROCESS_CLASS()
 
-        options['locale'] = locale
         make_messages(options=options)
-        self._push_translations(file_names, locale)
+        self._push_translations(file_names, options['locale'])
         compile_messages(options=options)
