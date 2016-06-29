@@ -15,7 +15,7 @@ $ python manage.py onesky_makemessages --help
   Usage: ./manage.py onesky_makemessages [options]
 
   Updates .po translation files using makemessages and uploads them to OneSky translation service.
-  Pushes new translation stringsfrom OneSky to django app and compiles messages.
+  Pushes new translation strings from OneSky to django app and compiles messages.
 
   Options:
     -v VERBOSITY, --verbosity=VERBOSITY

@@ -6,10 +6,11 @@ class MakeMessagesProcess(object):
     def __call__(self, options):
         locale = options.get('locale')
         verbosity = options.get('verbosity', 0)
-        ignore = options.get('ignore')
+        ignore_patterns = options.get('ignore_patterns', [])
 
         call_command('makemessages', locale=locale,
-                     symlinks=True, verbosity=verbosity, ignore=ignore)
+                     symlinks=True, verbosity=verbosity,
+                     ignore_patterns=ignore_patterns)
 
 
 class CompileMessagesProcess(object):
@@ -18,5 +19,4 @@ class CompileMessagesProcess(object):
         locale = options.get('locale')
         verbosity = options.get('verbosity', 0)
 
-        management.call_command('compilemessages', locale=locale,
-                                verbosity=verbosity)
+        call_command('compilemessages', locale=locale, verbosity=verbosity)

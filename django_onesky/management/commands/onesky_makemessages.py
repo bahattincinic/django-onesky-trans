@@ -3,8 +3,7 @@ import os
 from optparse import make_option
 from operator import itemgetter
 
-from django.core import management
-from django.core.management.base import CommandError
+from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 from django_onesky.client import OneSkyClient
@@ -17,7 +16,7 @@ from django_onesky.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
 client = OneSkyClient()
 
 
-class Command(management.BaseCommand):
+class Command(BaseCommand):
     help = (
         "Updates .po translation files using makemessages and "
         "uploads them to OneSky translation service."
@@ -25,7 +24,7 @@ class Command(management.BaseCommand):
         "from OneSky to django app and compiles messages."""
     )
 
-    option_list = management.BaseCommand.option_list + (
+    option_list = BaseCommand.option_list + (
         make_option('--locale', '-l', dest='locale', action='append',
                     help='locale(s) to process (e.g. de_AT). Default is to '
                          'process all. Can be used multiple times.'),
@@ -85,8 +84,7 @@ class Command(management.BaseCommand):
                     export_file_name=export_file_name)
 
                 error_messages = {
-                    HTTP_200_OK: 'Saving translation file %(filename)s '
-                                 'for #%(project)s.',
+                    HTTP_200_OK: 'Saving translation file for #%(project)s.',
                     HTTP_204_NO_CONTENT: 'Unable to download translation '
                                          'file %(export_file_name)s '
                                          'for #%(project)s. File has no '
@@ -109,8 +107,7 @@ class Command(management.BaseCommand):
                     'export_file_name': export_file_name,
                     'project': project,
                     'status': status,
-                    'message': self._get_error_message(response),
-                    'file_name': response.get('file_name', '')
+                    'message': self._get_error_message(response)
                 })
         return file_names
 
@@ -151,14 +148,13 @@ class Command(management.BaseCommand):
 
         status, response = client.get_project_detail(app_settings.PROJECT_ID)
         if status != HTTP_200_OK:
-            raise CommandError('%s project is invalid. You should '
-                               'check ONESKY_CONFIG' % project_id)
-
+            raise CommandError('%s project is invalid. You should check '
+                               'your ONESKY_CONFIG' % app_settings.PROJECT_ID)
         file_names = self._pull_translations()
         make_messages = app_settings.MAKE_MESSAGES_PROCESS_CLASS()
         compile_messages = app_settings.COMPILE_MESSAGES_PROCESS_CLASS()
 
+        options['locale'] = locale
         make_messages(options=options)
-
         self._push_translations(file_names, locale)
         compile_messages(options=options)

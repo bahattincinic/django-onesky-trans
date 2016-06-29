@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="django-onesky-trans",
-    version='0.1.5',
+    version='0.1',
     url='http://github.com/django-onesky-trans',
     author='Bahattin Cinic',
     author_email='bahattincinic@gmail.com',
