@@ -26,6 +26,8 @@ django-onesky-trans support all the features provided via oneskyapp.com APIs, su
 * Manage projects
 * Import translation files
 * Export translation files
+* Manage Orders
+* Manage Project Groups
 
 
 Documentation
