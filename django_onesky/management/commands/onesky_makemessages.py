@@ -6,14 +6,14 @@ from operator import itemgetter
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
-from django_onesky.client import OneSkyClient
+from django_onesky.client import ProjectClient
 from django_onesky.utils import remove_fuzzy_translations
 from django_onesky.conf import app_settings
 from django_onesky.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                   HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-client = OneSkyClient()
+client = ProjectClient()
 
 
 class Command(BaseCommand):
