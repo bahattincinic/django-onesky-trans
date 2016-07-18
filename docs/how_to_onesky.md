@@ -23,4 +23,4 @@ How to OneSky?
 - Restart your django app
 
 
-We copied from https://github.com/pista329/django-oneskyapp.
+We have copied from https://github.com/pista329/django-oneskyapp.
