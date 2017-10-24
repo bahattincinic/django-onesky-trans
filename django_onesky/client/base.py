@@ -39,8 +39,8 @@ class BaseOneSkyClient(object):
         """
         timestamp = str(int(time.time()))
         dev_hash = hashlib.md5()
-        dev_hash.update(timestamp)
-        dev_hash.update(app_settings.PRIVATE_KEY)
+        dev_hash.update(timestamp.encode('utf-8'))
+        dev_hash.update(app_settings.PRIVATE_KEY.encode('utf-8'))
 
         return {
             'timestamp': timestamp,
