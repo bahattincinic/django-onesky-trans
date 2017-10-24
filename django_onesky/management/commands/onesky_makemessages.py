@@ -138,6 +138,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        if len(options['locale']) == 0:
+            options['locale'] = [key for key, value in settings.LANGUAGES]
+
         if not app_settings.ENABLED:
             output = raw_input("OneSky Disabled in settings. Are you "
                                "sure you want to continue with "
