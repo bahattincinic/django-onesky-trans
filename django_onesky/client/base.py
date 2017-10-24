@@ -68,6 +68,13 @@ class BaseOneSkyClient(object):
                 response.headers['content-disposition'].split('=')[1]
             )
 
+            # in some cases the locale of One Sky does not match the locale of django.
+            # example: fy-NL => fy
+            if app_settings.REPLACE_LOCALES is not None and len(app_settings.REPLACE_LOCALES) > 0:
+                for one_sky_locale, django_locale in app_settings.REPLACE_LOCALES:
+                    if one_sky_locale in short_filename:
+                        short_filename = short_filename.replace(one_sky_locale, django_locale)
+
             absolute_filename = os.path.join(self.locale_path, short_filename)
             with open(absolute_filename, 'wb') as f:
                 for chunk in response.iter_content():

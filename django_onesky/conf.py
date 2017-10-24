@@ -18,6 +18,7 @@ DEFAULTS = {
     'PRIVATE_KEY': None,
     'PROJECT_ID': None,
     'ENABLED': True,
+    'REPLACE_LOCALES': None,
     'MAKE_MESSAGES_PROCESS_CLASS': (
         'django_onesky.process_messages.MakeMessagesProcess'),
     'COMPILE_MESSAGES_PROCESS_CLASS': (
