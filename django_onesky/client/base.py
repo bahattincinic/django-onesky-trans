@@ -39,8 +39,8 @@ class BaseOneSkyClient(object):
         """
         timestamp = str(int(time.time()))
         dev_hash = hashlib.md5()
-        dev_hash.update(timestamp)
-        dev_hash.update(app_settings.PRIVATE_KEY)
+        dev_hash.update(timestamp.encode('utf-8'))
+        dev_hash.update(app_settings.PRIVATE_KEY.encode('utf-8'))
 
         return {
             'timestamp': timestamp,
@@ -67,6 +67,13 @@ class BaseOneSkyClient(object):
             short_filename = (
                 response.headers['content-disposition'].split('=')[1]
             )
+
+            # in some cases the locale of One Sky does not match the locale of django.
+            # example: fy-NL => fy
+            if app_settings.REPLACE_LOCALES is not None and len(app_settings.REPLACE_LOCALES) > 0:
+                for one_sky_locale, django_locale in app_settings.REPLACE_LOCALES:
+                    if one_sky_locale in short_filename:
+                        short_filename = short_filename.replace(one_sky_locale, django_locale)
 
             absolute_filename = os.path.join(self.locale_path, short_filename)
             with open(absolute_filename, 'wb') as f:

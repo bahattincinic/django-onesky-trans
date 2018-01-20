@@ -1,6 +1,5 @@
 import os
 
-from optparse import make_option
 from operator import itemgetter
 
 from django.core.management.base import BaseCommand, CommandError
@@ -24,16 +23,17 @@ class Command(BaseCommand):
         "from OneSky to django app and compiles messages."""
     )
 
-    option_list = BaseCommand.option_list + (
-        make_option('--locale', '-l', dest='locale', action='append',
-                    help='locale(s) to process (e.g. de_AT). Default is to '
-                         'process all. Can be used multiple times.',
-                    default=map(itemgetter(0), settings.LANGUAGES)),
-        make_option('--ignore', '-i', action='append', dest='ignore_patterns',
-                    default=[], metavar='PATTERN',
-                    help='Ignore files or directories matching this glob-style'
-                         ' pattern. Use multiple times to ignore more.'),
-    )
+    def add_arguments(self, parser):
+
+        parser.add_argument('--locale', '-l', dest='locale', action='append',
+                            help='locale(s) to process (e.g. de_AT). Default is to '
+                                 'process all. Can be used multiple times.',
+                            default=[])
+
+        parser.add_argument('--ignore', '-i', action='append', dest='ignore_patterns',
+                            default=[], metavar='PATTERN',
+                            help='Ignore files or directories matching this glob-style'
+                                 ' pattern. Use multiple times to ignore more.')
 
     def _get_error_message(self, response):
         return response.get("meta", {}).get("message", "")
@@ -137,6 +137,9 @@ class Command(BaseCommand):
                                                is_keeping_all_strings=False)
 
     def handle(self, *args, **options):
+
+        if len(options['locale']) == 0:
+            options['locale'] = [key for key, value in settings.LANGUAGES]
 
         if not app_settings.ENABLED:
             output = raw_input("OneSky Disabled in settings. Are you "
